@@ -1,0 +1,21 @@
+application: send2gyazo
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /static
+  static_dir: static
+- url: /crossdomain.xml
+  static_files: static/crossdomain.xml
+  upload: /crossdomain.xml
+- url: /cyazo/
+  static_files: cyazo/index.html
+  upload: /index.html
+- url: /cyazo
+  static_dir: cyazo
+- url: /
+  static_files: static/index.html
+  upload: /index.html
+- url: /.*
+  script: send2gyazo.py

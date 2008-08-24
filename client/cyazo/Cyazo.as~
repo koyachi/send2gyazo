@@ -1,0 +1,78 @@
+package  {
+    import flash.display.*;
+    import flash.media.Camera;
+    import flash.media.Video;
+    import flash.text.TextField;
+    import flash.text.TextFieldAutoSize;
+    import flash.events.StatusEvent;
+    import flash.events.MouseEvent;
+    import flash.system.SecurityPanel;
+    import flash.system.Security;
+    import flash.utils.Timer;
+    import flash.events.TimerEvent;
+
+    public class Cyazo extends Sprite {
+        private var cam:Camera;
+        private var tf:TextField;
+        private var t:Timer = new Timer(1000);
+
+        public function Cyazo() {
+            tf = new TextField();
+            tf.x = 10;
+            tf.y = 10;
+            tf.background = true;
+            tf.selectable = false;
+            tf.autoSize = TextFieldAutoSize.LEFT;
+            
+            cam = Camera.getCamera();
+//            cam.setMode(160, 120, 10);
+            if (!cam) {
+                tf.text = "No Camera is installed.";
+            }
+            else if (cam.muted) {
+                tf.text = ["To enable the use of the camera,\n",
+                           "please click on this text field.\n",
+                           "When the Flash Player Setting dialog appears,\n",
+                           "make sure to select the Allow radio button\n",
+                           "to grant access to your camera."].join("");
+                tf.addEventListener(MouseEvent.CLICK, clickHandler);
+            }
+            else {
+                tf.text = "Connecting";
+                connectCamera();
+            }
+            addChild(tf);
+            t.addEventListener(TimerEvent.TIMER, timerHandler);
+        }
+
+        private function clickHandler(e:MouseEvent):void {
+            Security.showSettings(SecurityPanel.PRIVACY);
+            cam.addEventListener(StatusEvent.STATUS, statusHandler);
+            tf.removeEventListener(MouseEvent.CLICK, clickHandler);
+        }
+        private function statusHandler(e:StatusEvent):void {
+            if (e.code == "Camera.Unmuted") {
+                connectCamera();
+                cam.removeEventListener(StatusEvent.STATUS, statusHandler);
+            }
+        }
+        private function connectCamera():void {
+//            cam.setMode(160, 120, 10);
+            var vid:Video = new Video(cam.width, cam.height);
+            vid.x = 10;
+            vid.y = 10;
+            vid.attachCamera(cam);
+            addChild(vid);
+            tf.text = "CONNECTED.";
+            t.start();
+        }
+        private function timerHandler(e:TimerEvent):void {
+            tf.y = cam.height + 20;
+            tf.text = "";
+            tf.appendText("bandwidth: " + cam.bandwidth + "\n");
+            tf.appendText("currentFPS: " + Math.round(cam.currentFPS) + "\n");
+            tf.appendText("fps: " + cam.fps + "\n");
+            tf.appendText("keyFrameInterval:" + cam.keyFrameInterval + "\n");
+        }
+    }
+}

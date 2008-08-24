@@ -1,0 +1,39 @@
+<html>
+<head>
+  <title>Cyazo</title>
+  <style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+  </style>
+</head>
+<body>
+  <script type="text/javascript" src="./swfobject.js"></script>    
+  <script type="text/javascript" src="./swffit.js"></script>    
+  <div id="cyazo">
+    You need Flash player 8+ and JavaScript enabled to view this video.
+  </div>
+</body>
+<script>
+function installSWF() {
+  var params = { allowScriptAccess: "always" };
+  var atts = { id: "cyazo" };
+  swfobject.embedSWF("./Cyazo.swf", 
+                     "cyazo", "100%", "100%", "8", null, null, params, atts);
+}
+
+function addEventHandler(obj, action, func) {
+  if (obj.addEventListener) {
+    obj.addEventListener(action, func, false);
+  }
+  else {
+    obj.attachEvent('on' + action, func);
+  }
+}
+
+addEventHandler(window, 'load', function(e) {
+  installSWF();
+});
+</script>
+</html>
